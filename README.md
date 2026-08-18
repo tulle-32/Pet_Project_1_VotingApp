@@ -1,5 +1,7 @@
 ## Pet Project — Voting App на Kubernetes
 
+> Проект полностью локальный: разворачивается на minikube внутри Ubuntu VM (VirtualBox), не на облачном кластере.
+
 Учебный pet-проект: multi-tier приложение для голосования, полностью описанное как инфраструктура-как-код и развёрнутое в Kubernetes.
 
 ## Архитектура
@@ -15,6 +17,7 @@ Vote и Result доступны снаружи через общий Ingress. П
 - Готовые образы: `dockersamples/examplevotingapp_vote`, `_worker`, `_result`
 - Redis, PostgreSQL 15 (Alpine)
 - Ingress (маршрутизация по хостам `vote.local` / `result.local`)
+- Все объекты изолированы в namespace `voting-app`
 
 ## Структура репозитория
 
@@ -30,6 +33,7 @@ Vote и Result доступны снаружи через общий Ingress. П
 
 ```bash
 minikube addons enable ingress
+kubectl apply -f manifests/namespace.yaml
 kubectl apply -f manifests/ -R
 ```
 
