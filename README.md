@@ -18,6 +18,7 @@ Vote и Result доступны снаружи через общий Ingress. П
 
 ## Структура репозитория
 
+\`\`\`
 manifests/
 ├── vote/
 ├── redis/
@@ -27,7 +28,7 @@ manifests/
 └── ingress.yaml
 docs/
 └── architecture.md
-
+\`\`\`
 
 ## Запуск
 
