@@ -126,3 +126,9 @@ kubectl get pods,svc,deployment,statefulset -n voting-app
 Все компоненты имеют `resources.requests`/`resources.limits` — минимальные разумные значения, чтобы ни один контейнер не мог захватить все ресурсы ноды ("noisy neighbor").
 
 liveness у каждого компонента настроен с большим `initialDelaySeconds`, чем readiness — если liveness сработает слишком рано (пока контейнер ещё объективно стартует), Kubernetes может убить здоровый, но медленно поднимающийся контейнер.
+
+## Rolling update — проверено вживую
+
+kubectl rollout restart deployment/vote -n voting-app
+
+Наблюдение (kubectl get pods -w -l app=vote): новый Pod поднимается и проходит readinessProbe ДО того, как старый начинает завершаться — в моменте временно 3 Pod'а вместо 2. Zero-downtime обеспечивается связкой readinessProbe + replicas: 2 — Service не переключает трафик на Pod, пока тот не готов принимать запросы.
