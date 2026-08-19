@@ -104,7 +104,7 @@ Service.metadata.name    ◄─► StatefulSet.spec.serviceName              (с
 ## Что нужно перед реальным деплоем
 
 - minikube addons enable ingress — включить контроллер, реально обрабатывающий правила Ingress
-- Добавить в hosts-файл на Windows-хосте IP minikube для vote.local и result.local
+- Добавить `vote.local`/`result.local` в `/etc/hosts` — проверено внутри Ubuntu VM; доступ с Windows-хоста отдельно не проверялся
 - Применить манифесты рекурсивно: kubectl apply -f manifests/ -R
 
 ## Namespace

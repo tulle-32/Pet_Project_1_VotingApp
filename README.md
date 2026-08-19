@@ -21,6 +21,7 @@ Vote и Result доступны снаружи через общий Ingress. П
 
 ## Структура репозитория
 
+- manifests/namespace.yaml — создаёт namespace `voting-app`
 - manifests/vote/ — Deployment + Service для Vote
 - manifests/redis/ — Deployment + Service для Redis
 - manifests/worker/ — Deployment для Worker
@@ -37,12 +38,13 @@ kubectl apply -f manifests/namespace.yaml
 kubectl apply -f manifests/ -R
 ```
 
-Добавить в `hosts` (на Windows-хосте):
+Добавить записи в hosts-файл — протестировано и подтверждено рабочим внутри самой Ubuntu VM:
 
-<IP minikube> vote.local
-<IP minikube> result.local
+echo "$(minikube ip) vote.local result.local" | sudo tee -a /etc/hosts
+
+Доступ с браузера на Windows-хосте отдельно не проверялся — зависит от режима сети VirtualBox (NAT/Bridged/Host-only), может потребовать дополнительной настройки.
 
 
 ## Статус
 
-В разработке — все манифесты написаны, идёт тестовый деплой.
+v1.0.0 — полностью рабочий деплой, протестирован через Ingress внутри Ubuntu VM (minikube). Проходит полный цикл: голос → очередь → обработка → база → результат.
