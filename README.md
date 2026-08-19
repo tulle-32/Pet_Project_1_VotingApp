@@ -8,7 +8,6 @@
 
 Vote (Flask) → Redis (очередь) → Worker (.NET) → Postgres (StatefulSet) → Result (Node.js)
 
-
 Vote и Result доступны снаружи через общий Ingress. Подробное описание зависимостей между манифестами — в [`docs/architecture.md`](docs/architecture.md).
 
 ## Стек
@@ -18,6 +17,7 @@ Vote и Result доступны снаружи через общий Ingress. П
 - Redis, PostgreSQL 15 (Alpine)
 - Ingress (маршрутизация по хостам `vote.local` / `result.local`)
 - Все объекты изолированы в namespace `voting-app`
+- Readiness/liveness probes и resource requests/limits для всех компонентов
 
 ## Структура репозитория
 
@@ -44,7 +44,11 @@ echo "$(minikube ip) vote.local result.local" | sudo tee -a /etc/hosts
 
 Доступ с браузера на Windows-хосте отдельно не проверялся — зависит от режима сети VirtualBox (NAT/Bridged/Host-only), может потребовать дополнительной настройки.
 
-
 ## Статус
 
-v1.0.0 — полностью рабочий деплой, протестирован через Ingress внутри Ubuntu VM (minikube). Проходит полный цикл: голос → очередь → обработка → база → результат.
+v1.1.0 — полностью рабочий деплой с readiness/liveness probes и resource limits, протестирован через Ingress внутри Ubuntu VM (minikube). Проходит полный цикл: голос → очередь → обработка → база → результат.
+
+## Дальнейшие шаги
+
+- CI/CD (GitHub Actions) — автоматическая проверка манифестов на каждый push, дублирование репозитория в GitLab
+- Helm chart вместо плоских манифестов

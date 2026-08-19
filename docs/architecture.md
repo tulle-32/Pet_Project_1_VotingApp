@@ -113,3 +113,16 @@ Service.metadata.name    ◄─► StatefulSet.spec.serviceName              (с
 
 Проверка одной командой:
 kubectl get pods,svc,deployment,statefulset -n voting-app
+
+## Probes и Resource limits
+
+| Компонент | readinessProbe / livenessProbe | Почему именно так |
+|---|---|---|
+| Vote, Result | httpGet на `/`, порт 80 | Оба — HTTP-серверы, отдают HTML на корневом пути |
+| Redis | tcpSocket, порт 6379 | Redis не понимает HTTP, проверяем только факт открытого TCP-порта |
+| Postgres | exec: `pg_isready -U postgres_admin` | Официальная утилита из образа postgres для проверки готовности принимать подключения |
+| Worker | Не используются | У Worker нет открытого порта (не принимает входящие соединения) — httpGet/tcpSocket технически неприменимы. Kubernetes всё равно перезапустит контейнер при падении процесса — это базовое поведение, работает без явного probe |
+
+Все компоненты имеют `resources.requests`/`resources.limits` — минимальные разумные значения, чтобы ни один контейнер не мог захватить все ресурсы ноды ("noisy neighbor").
+
+liveness у каждого компонента настроен с большим `initialDelaySeconds`, чем readiness — если liveness сработает слишком рано (пока контейнер ещё объективно стартует), Kubernetes может убить здоровый, но медленно поднимающийся контейнер.
